@@ -56,18 +56,23 @@ class Phone(Field):
 
     @Field.value.setter
     def value(self, value):
-        super(Phone, self.__class__).value.fset(self, Phone.check_phone(value))
+        self._value = self.check_phone(value)
 
 
 class Birthday(Field):
     """Необов'язкове поле з датою народження"""
 
-    @Field.value.setter
-    def value(self, value):
+    @classmethod
+    def check_date(cls, birthday):
+        """Метод для валідації синтаксису дати народження"""
         try:
-            super(Birthday, self.__class__).value.fset(self, datetime.datetime.strptime(value, '%d-%m-%Y'))
+            return datetime.datetime.strptime(birthday, '%d-%m-%Y')
         except ValueError:
             print('Incorrect date format, should be DD-MM-YYYY')
+
+    @Field.value.setter
+    def value(self, value):
+        self._value = self.check_date(value)
 
 
 class Record:
